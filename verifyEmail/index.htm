@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bobl - #jointhebobl</title>
+    <link rel="stylesheet" href="../css/index.css" type="text/css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z21SJBHQD0"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Z21SJBHQD0');
+    </script>
+    <style>
+        .header-body > div.hidden{
+            display: none;
+        }
+
+        #expired-div > button, #re-issue-failed-div > button{
+            background-color: skyblue;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-family: 'Comfortaa';
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            font-size: 18px;
+            align-self: flex-start;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-nav">
+            <a href="/">
+                <img src="../img/bobl-text-logo.png" />
+            </a>
+            <div class="social-media">
+                <a href="https://www.instagram.com/webobl/" target="_blank">
+                    <img src="../img/instagram.png" />
+                </a>
+                <a href="https://twitter.com/webobl" target="_blank">
+                    <img src="../img/twitter.png" />
+                </a>
+            </div>
+        </div>
+        <div class="header-body">
+            <div id="success-div" class="hidden">
+                <p>Email Verified!</p>
+                <p>#joinTheBobl</p>
+            </div>
+            <div id="already-verified-div" class="hidden">
+                <p>Email already verified!</p>
+                <p>#joinTheBobl</p>
+            </div>
+            <div id="expired-div" class="hidden">
+                <p>Link has expired</p>
+                <button onclick="reIssue()">Re-Issue</button>
+            </div>
+            <div id="invalid-div" class="hidden">
+                <p>Link is Invalid : /</p>
+            </div>
+            <div id="re-issue-success-div" class="hidden">
+                <p>Link has been Re-Issued <br/> Check your email</p>
+            </div>
+            <div id="re-issue-failed-div" class="hidden">
+                <p>Link Re-Issue failed. <br/> Try again... : /</p>
+                <button onclick="reIssue()">Re-Issue</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Function to get the token from the URL
+        function getTokenFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+
+        // Function to verify the token
+        async function verifyToken(token) {
+
+                if(token === null){
+                    document.getElementById('invalid-div').classList.remove('hidden');
+                    return null
+                }
+                // Make an API call to the backend to verify the token
+                const response = await fetch(`https://api.webobl.com/v1.0/users/verifyEmail?token=${token}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Parse the response
+                const result = await response.json();
+
+                // Display success or error message based on response
+                if (response.ok && result.valid) {
+                    document.getElementById('success-div').classList.remove('hidden');
+                }else if(result.alreadyVerified) {
+                    document.getElementById('already-verified-div').classList.remove('hidden');
+                }
+                 else if(!result.valid && result.hasExpired) {
+                    document.getElementById('expired-div').classList.remove('hidden');
+                } else {
+                    document.getElementById('invalid-div').classList.remove('hidden');
+                }
+
+                return result.userId
+        }
+
+        // Get the token and verify it
+        const token = getTokenFromUrl();
+        let userId = null;
+        verifyToken(token).then(result => {
+            userId = result;
+        });
+
+        async function reIssue() {
+            // Make an API call to the backend to verify the token
+            if (!userId) {
+                userId = await verifyToken(token);
+            }
+
+            const response = await fetch(`https://api.webobl.com/v1.0/users/reIssueEmailVerification?userId=${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Parse the response
+                const result = await response.json();
+
+                document.getElementById('expired-div').classList.add('hidden');
+                document.getElementById('re-issue-failed-div').classList.add('hidden'); 
+                if(response.ok){
+                    document.getElementById('re-issue-success-div').classList.remove('hidden');
+                }
+                else
+                {
+                    document.getElementById('re-issue-failed-div').classList.remove('hidden'); 
+                } 
+        }
+
+    </script>
+</body>
+</html>

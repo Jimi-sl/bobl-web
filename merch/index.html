@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Bobl - Official Merch</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../css/font.css">
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z21SJBHQD0"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Z21SJBHQD0');
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="../img/bobl-text-logo.png" alt="Bobl" class="logo">
+            <nav>
+                <a href="../index.htm">Home</a>
+<a href="index.html" class="active">Merch</a>
+                <button class="cart-btn" onclick="toggleCart()">
+                    🛒 Cart <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Support Bobl</h1>
+                <p class="subtitle">Help us keep the app free and thriving</p>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-box">
+                    <h2>We Need Your Support</h2>
+                    <p>Bobl is a passion project built by a small team dedicated to connecting people through local events and experiences. We're currently struggling to fund the app's development and server costs.</p>
+                    <p>By purchasing our merch, you're not just getting quality gear—you're directly supporting our mission to keep Bobl free, ad-free, and accessible to everyone.</p>
+                    <p class="highlight">Every purchase helps us:</p>
+                    <ul>
+                        <li>Keep servers running</li>
+                        <li>Add new features</li>
+                        <li>Maintain a free, ad-free experience</li>
+                        <li>Support our small development team</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="products">
+            <div class="container">
+                <h2>Official Bobl Merch</h2>
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/black-shirt.png" alt="Bobl Black T-Shirt">
+                        </div>
+                        <h3>Bobl Black T-Shirt</h3>
+                        <p class="price">₦18,000</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl Black T-Shirt', 18000)">Add to Cart</button>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/white-shirt.png" alt="Bobl White T-Shirt">
+                        </div>
+                        <h3>Bobl White T-Shirt</h3>
+                        <p class="price">₦18,000</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl White T-Shirt', 18000)">Add to Cart</button>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/tote-bag.png" alt="Bobl Tote Bag">
+                        </div>
+                        <h3>Bobl Tote Bag</h3>
+                        <p class="price">₦10,000</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl Tote Bag', 10000)">Add to Cart</button>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/metallic-black-bottle.png" alt="Bobl Metallic Black Bottle">
+                        </div>
+                        <h3>Bobl Metallic Black Bottle</h3>
+                        <p class="price">₦15,000</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl Metallic Black Bottle', 15000)">Add to Cart</button>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/metallic-white-bottle.png" alt="Bobl Metallic White Bottle">
+                        </div>
+                        <h3>Bobl Metallic White Bottle</h3>
+                        <p class="price">₦15,000</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl Metallic White Bottle', 15000)">Add to Cart</button>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/note.png" alt="Bobl Notebook">
+                        </div>
+                        <h3>Bobl Notebook</h3>
+                        <p class="price">₦7,500</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl Notebook', 7500)">Add to Cart</button>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="imgs/pen.png" alt="Bobl Pen">
+                        </div>
+                        <h3>Bobl Pen</h3>
+                        <p class="price">₦3,500</p>
+                        <button class="btn-primary" onclick="addToCart('Bobl Pen', 3500)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="thank-you">
+            <div class="container">
+                <h2>Thank You for Your Support!</h2>
+                <p>Every purchase makes a real difference in keeping Bobl alive and growing. We're grateful for your support.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Bobl. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="../Privacy-Policy.html">Privacy Policy</a>
+                <a href="../EULA.html">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total">Total: <strong id="cartTotal">₦0</strong></div>
+            <button class="btn-primary" onclick="openCheckout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutOverlay">
+        <div class="checkout-modal">
+            <div class="modal-header">
+                <h3>Complete Your Order</h3>
+                <button onclick="closeCheckout()">✕</button>
+            </div>
+            <form id="checkoutForm" onsubmit="initiatePayment(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="custName" required placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="custEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="custPhone" required placeholder="08012345678">
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea id="custAddress" required placeholder="Full delivery address" rows="3"></textarea>
+                </div>
+                <div class="order-summary">
+                    <strong>Order Summary</strong>
+                    <div id="orderSummaryItems"></div>
+                    <div class="order-total">Total: <strong id="orderTotal">₦0</strong></div>
+                </div>
+                <button type="submit" class="btn-primary">Pay with Paystack</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

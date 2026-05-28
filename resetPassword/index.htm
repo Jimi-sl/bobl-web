@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bobl - #jointhebobl</title>
+    <link rel="stylesheet" href="../css/index.css" type="text/css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z21SJBHQD0"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Z21SJBHQD0');
+    </script>
+    <style>
+        #error-password{
+            font-family: 'Comfortaa';
+            font-size: 14px;
+            color: red;
+        }
+        .header-body > div.hidden, .hidden{
+            display: none;
+        }
+
+        form > input[type=submit]{
+            background-color: skyblue;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-family: 'Comfortaa';
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        form > input[type=password]{
+            border: 1px solid grey;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: black;
+            font-family: 'Comfortaa';
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            font-size: 18px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-nav">
+            <a href="/">
+                <img src="../img/bobl-text-logo.png" />
+            </a>
+            <div class="social-media">
+                <a href="https://www.instagram.com/webobl/" target="_blank">
+                    <img src="../img/instagram.png" />
+                </a>
+                <a href="https://twitter.com/webobl" target="_blank">
+                    <img src="../img/twitter.png" />
+                </a>
+            </div>
+        </div>
+        <div class="header-body">
+            <div id="success-div" class="hidden">
+                <form id="myForm">
+                    <input type="password" placeholder="Enter new password" id="password" />
+                    <input type="submit" value="Reset Password" />
+                </form>
+                <p id="password-reset-failed-div" class="hidden">Password reset failed <br/> Please try again</p>
+                <ul class="hidden" id="error-password">
+                    <li>Password has to be more than 6 characters;</li>
+                    <li>have a capital letter</li>
+                    <li>a number</li>
+                    <li>a special character</li>
+                </ul>
+            </div>
+            <div id="password-reset-div" class="hidden">
+                <p>Password reset successfully!</p>
+                <p>#joinTheBobl</p>
+            </div>
+            <div id="already-verified-div" class="hidden">
+                <p>Link has already been used!</p>
+            </div>
+            <div id="expired-div" class="hidden">
+                <p>Link has expired</p>
+            </div>
+            <div id="invalid-div" class="hidden">
+                <p>Link is Invalid : /</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Function to get the token from the URL
+        function getTokenFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+
+        // Function to verify the token
+        async function verifyToken(token) {
+
+                if(token === null){
+                    document.getElementById('invalid-div').classList.remove('hidden');
+                    return null
+                }
+                // Make an API call to the backend to verify the token
+                const response = await fetch(`https://api.webobl.com/v1.0/users/resetPasswordResponse/?token=${token}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Parse the response
+                const result = await response.json();
+
+                // Display success or error message based on response
+                if (response.ok && result.valid) {
+                    document.getElementById('success-div').classList.remove('hidden');
+                }
+                else if(result.isUsed) {
+                    document.getElementById('already-verified-div').classList.remove('hidden');
+                }
+                else if(!result.valid && result.hasExpired) {
+                    document.getElementById('expired-div').classList.remove('hidden');
+                } else {
+                    document.getElementById('invalid-div').classList.remove('hidden');
+                }
+
+        }
+
+        // Get the token and verify it
+        const token = getTokenFromUrl();
+        verifyToken(token)
+
+        document.getElementById('myForm').onsubmit = async function(event) {
+            document.getElementById('error-password').classList.add('hidden');
+
+            event.preventDefault()
+
+            let password = document.getElementById('password').value  
+
+            if(password.trim() === '' ||
+            !password.match(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,})/)){
+                document.getElementById('error-password').classList.remove('hidden');
+                return null
+            }else{
+                const response = await fetch(`https://api.webobl.com/v1.0/users/resetPassword`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        token: token,
+                        password: password
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Parse the response
+                const result = await response.json();
+
+                if(response.ok){
+                    document.getElementById('success-div').classList.add('hidden')
+                    document.getElementById('password-reset-failed-div').classList.add('hidden'); 
+                    document.getElementById('password-reset-div').classList.remove('hidden')
+                }
+                else
+                {
+                    document.getElementById('password-reset-failed-div').classList.remove('hidden'); 
+                } 
+
+            }
+        }
+
+    </script>
+</body>
+</html>

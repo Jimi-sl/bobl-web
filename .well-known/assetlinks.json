@@ -1,0 +1,13 @@
+[
+    {
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.imgdoesit.bobl",
+        "sha256_cert_fingerprints": [
+          "76:BA:72:3B:5B:02:CC:21:1E:0B:47:C8:91:9E:92:99:D7:32:72:F6:B7:67:3A:8D:E7:7E:A1:7B:E5:E1:01:0D"
+        ]
+      }
+    }
+  ]
+  

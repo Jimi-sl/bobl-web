@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bobl - Filtered Leaderboard Dashboard</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z21SJBHQD0"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Z21SJBHQD0');
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
+         *{font-family: 'Comfortaa', sans-serif;}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #4facfe;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            padding: 40px 30px;
+            text-align: center;
+            color: grey;
+            position: relative;
+        }
+
+        .filters-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .filters-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .logo {
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .filters-section {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .leaderboard {
+            padding: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
+
+        .rank-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .rank-item.top-3 {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .rank-item.first {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 2px solid #ffd700;
+        }
+
+        .rank-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            width: 60px;
+            text-align: center;
+            color: #333;
+        }
+
+        .rank-number.first {
+            color: #b8860b;
+        }
+
+        .profile-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .points {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .points-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4facfe;
+            margin-left: auto;
+        }
+
+        .points-value.first {
+            color: #b8860b;
+        }
+
+        .crown {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #e74c3c;
+            font-size: 1.1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .google-login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .google-login:hover {
+            border-color: #4285f4;
+            box-shadow: 0 2px 10px rgba(66, 133, 244, 0.2);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .user-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .filter-description {
+            margin-top: 15px;
+            padding: 12px 15px;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .filters-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+            
+            .filter-actions {
+                width: 100%;
+                justify-content: stretch;
+            }
+            
+            .filter-actions .btn {
+                flex: 1;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .rank-item {
+                padding: 15px;
+            }
+            
+            .profile-pic {
+                width: 50px;
+                height: 50px;
+                margin: 0 15px;
+            }
+            
+            .username {
+                font-size: 1.1rem;
+            }
+            
+            .points-value {
+                font-size: 1.5rem;
+            }
+
+            .filters-btn {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button id="filtersBtn" class="filters-btn">Login & Filter</button>
+            <img src="../img/bobl-text-logo.png" alt="Bobl Logo" class="logo">
+            <h1 class="title">Leaderboard Dashboard</h1>
+            <p class="subtitle">Filter and search user rankings by total points</p>
+        </div>
+        
+        <div class="filters-section">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="filter-group">
+                    <label for="searchUser">Search User</label>
+                    <input type="text" id="searchUser" placeholder="Enter username...">
+                </div>
+                <div class="filter-actions">
+                    <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
+                    <button id="clearFilters" class="btn btn-secondary">Clear</button>
+                </div>
+            </div>
+            <div id="filterDescription" class="filter-description"></div>
+        </div>
+        
+        <div class="leaderboard">
+            <div id="loading" class="loading">
+                Loading leaderboard...
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                Unable to load leaderboard. Please try again later.
+            </div>
+            
+            <div id="leaderboard-content"></div>
+        </div>
+    </div>
+
+    <!-- Login Required Modal -->
+    <div id="loginRequiredModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-required">&times;</span>
+                <h2>🔒 Login Required</h2>
+                <p>Please login to use filtering features</p>
+            </div>
+            <div class="modal-body">
+                <button id="proceedToLogin" class="btn btn-primary">Login Now</button>
+                <button id="cancelAction" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Welcome to Bobl</h2>
+                <p>Login to access the dashboard</p>
+            </div>
+            <div class="modal-body">
+                <button id="googleLoginBtn" class="google-login">
+                    <img src="../img/google_icon.png" alt="Google" class="google-icon">
+                    Continue with Google
+                </button>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                
+                <div id="userSection" class="user-section" style="display: none;">
+                    <h3>Welcome back!</h3>
+                    <p>You can now filter the leaderboard data.</p>
+                    <button id="logoutBtn" class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('authToken');
+        const modal = document.getElementById('loginModal');
+        const loginRequiredModal = document.getElementById('loginRequiredModal');
+        const closeBtn = document.querySelector('.close');
+        const closeRequiredBtn = document.querySelector('.close-required');
+        const loginForm = document.getElementById('loginForm');
+        const userSection = document.getElementById('userSection');
+        const filtersBtn = document.getElementById('filtersBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const proceedToLoginBtn = document.getElementById('proceedToLogin');
+        const cancelActionBtn = document.getElementById('cancelAction');
+
+        filtersBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        closeBtn.onclick = () => modal.style.display = 'none';
+        closeRequiredBtn.onclick = () => loginRequiredModal.style.display = 'none';
+        
+        proceedToLoginBtn.onclick = () => {
+            loginRequiredModal.style.display = 'none';
+            modal.style.display = 'block';
+        };
+        
+        cancelActionBtn.onclick = () => {
+            loginRequiredModal.style.display = 'none';
+        };
+        
+        window.onclick = (event) => {
+            if (event.target == modal) modal.style.display = 'none';
+            if (event.target == loginRequiredModal) loginRequiredModal.style.display = 'none';
+        };
+
+        googleLoginBtn.addEventListener('click', () => {
+            google.accounts.id.initialize({
+                client_id: '821234894545-kd5qu5n8vvm53av4lck5mi23kvdl229d.apps.googleusercontent.com',
+                callback: handleGoogleLogin
+            });
+            
+            google.accounts.id.prompt();
+        });
+
+        async function handleGoogleLogin(response) {
+            try {
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                
+                const userData = {
+                    email: payload.email,
+                    name: payload.name,
+                    username: payload.given_name || payload.name.split(' ')[0],
+                    photoUrl: payload.picture
+                };
+
+                let loginResponse = await fetch('https://api.webobl.com/v1.0/users/google-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                if (loginResponse.status === 404) {
+                    alert('Account not found. Please download the Bobl app to register first.');
+                    return;
+                }
+
+                if (loginResponse.ok) {
+                    const data = await loginResponse.json();
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    
+                    userSection.style.display = 'block';
+                    loginForm.style.display = 'none';
+                    filtersBtn.textContent = 'Logged In';
+                    modal.style.display = 'none';
+                } else {
+                    const error = await loginResponse.json();
+                    alert(error.error || 'Google login failed');
+                }
+            } catch (error) {
+                console.error('Google login error:', error);
+                alert('Google login failed. Please try again.');
+            }
+        }
+
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await fetch('https://api.webobl.com/v1.0/users/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ pushToken: '' })
+                });
+            } catch (error) {
+                console.error('Logout API error:', error);
+            }
+            
+            localStorage.removeItem('authToken');
+            authToken = null;
+            userSection.style.display = 'none';
+            loginForm.style.display = 'block';
+            modal.style.display = 'none';
+            filtersBtn.textContent = 'Login & Filter';
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('https://api.webobl.com/v1.0/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    
+                    userSection.style.display = 'block';
+                    loginForm.style.display = 'none';
+                    filtersBtn.textContent = 'Logged In';
+                    modal.style.display = 'none';
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Login failed');
+                }
+            } catch (error) {
+                alert('Login failed. Please try again.');
+            }
+        });
+
+        // Filter functionality
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            if (!authToken) {
+                loginRequiredModal.style.display = 'block';
+                return;
+            }
+            updateFilterDescription();
+            loadLeaderboard();
+        });
+        document.getElementById('clearFilters').addEventListener('click', () => {
+            if (!authToken) {
+                loginRequiredModal.style.display = 'block';
+                return;
+            }
+            setDefaultDates();
+            document.getElementById('searchUser').value = '';
+            updateFilterDescription();
+            loadLeaderboard();
+        });
+
+        async function loadLeaderboard() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const search = document.getElementById('searchUser').value;
+            
+            const params = new URLSearchParams();
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            if (search) params.append('search', search);
+
+            const url = `https://api.webobl.com/v1.0/leaderboard/referral/filtered${params.toString() ? '?' + params.toString() : ''}`;
+
+            try {
+                const response = await fetch(url, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const data = await response.json();
+                displayLeaderboard(data.leaderboard);
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        function displayLeaderboard(leaderboard) {
+            document.getElementById('loading').style.display = 'none';
+            const container = document.getElementById('leaderboard-content');
+            
+            if (!leaderboard || leaderboard.length === 0) {
+                container.innerHTML = '<div class="error">No user data available for the selected filters.</div>';
+                return;
+            }
+            
+            container.innerHTML = leaderboard.map((user) => {
+                const rank = user.rank;
+                const isFirst = rank === 1;
+                const isTop3 = rank <= 3;
+                const initial = user.username ? user.username.charAt(0).toUpperCase() : 'U';
+                
+                return `
+                    <div class="rank-item ${isTop3 ? 'top-3' : ''} ${isFirst ? 'first' : ''}" style="position: relative;">
+                        ${isFirst ? '<div class="crown">👑</div>' : ''}
+                        <div class="rank-number ${isFirst ? 'first' : ''}">#${rank}</div>
+                        <div class="profile-pic">
+                            ${user.profileUrl ? 
+                                `<img src="${user.profileUrl}" alt="${user.username}">` : 
+                                initial
+                            }
+                        </div>
+                        <div class="user-info">
+                            <div class="username">${user.username}</div>
+                        </div>
+                        <div class="points-value ${isFirst ? 'first' : ''}">${user.totalPoints}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Set default dates to current week
+        function setDefaultDates() {
+            const today = new Date();
+            const currentDay = today.getDay();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - currentDay);
+            
+            document.getElementById('startDate').value = startOfWeek.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        }
+
+        function updateFilterDescription() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const search = document.getElementById('searchUser').value;
+            
+            let description = 'Current filters: ';
+            const filters = [];
+            
+            if (startDate) filters.push(`From ${new Date(startDate).toLocaleDateString()}`);
+            if (endDate) filters.push(`To ${new Date(endDate).toLocaleDateString()}`);
+            if (search) filters.push(`Username contains "${search}"`);
+            
+            if (filters.length === 0) {
+                description += 'All time data';
+            } else {
+                description += filters.join(', ');
+            }
+            
+            document.getElementById('filterDescription').textContent = description;
+        }
+
+        // Check if user is already logged in
+        if (authToken) {
+            filtersBtn.textContent = 'Logged In';
+            userSection.style.display = 'block';
+            loginForm.style.display = 'none';
+        }
+
+        // Set default dates and load leaderboard on page load
+        setDefaultDates();
+        updateFilterDescription();
+        loadLeaderboard();
+    </script>
+</body>
+</html>
